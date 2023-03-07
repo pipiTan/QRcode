@@ -18,7 +18,9 @@ MainWindow::MainWindow(QWidget *parent)
     //解码
     connect(ui->decodeBtn, &QPushButton::clicked, this,[this]() { decode(this->encodeImg); });
 
-    connect(ui->fileDecodeBtn, &QPushButton::clicked, this, &MainWindow::on_qrcode_scan_pbtn_clicked);
+    connect(ui->fileDecodeBtn, &QPushButton::clicked, this, &MainWindow::on_qrcode_file_pbtn_clicked);
+
+    connect(ui->saveCodeBtn, &QPushButton::clicked, this, &MainWindow::on_save_qrcode_pbtn_clicked);
 }
 
 MainWindow::~MainWindow()
@@ -34,10 +36,10 @@ void MainWindow::on_generator_qrcode_pbtn_clicked()
     ui->encodeLabel->setPixmap(QPixmap::fromImage(encodeImg));
 }
 
-void MainWindow::on_qrcode_scan_pbtn_clicked()
+void MainWindow::on_qrcode_file_pbtn_clicked()
 {
     //选择图片文件
-    QString filename = QFileDialog::getOpenFileName(this,"file","./","any files(*.*)"";;any files(*.png)");
+    QString filename = QFileDialog::getOpenFileName(this,tr("open file"),"","jpg file (*.jpg);;any files(*.*)");
     if(!(decodeImg.load(filename))){
             return;
     }
@@ -46,21 +48,12 @@ void MainWindow::on_qrcode_scan_pbtn_clicked()
     ui->decodeLabel->setPixmap(QPixmap::fromImage(decodeImg));
 
     decode(decodeImg);
-////    QImage imageToDecode(filename);
-//    QZXing decoder;
-//    decoder.setDecoder( QZXing::DecoderFormat_QR_CODE | QZXing::DecoderFormat_EAN_13 );
-//    decoder.setSourceFilterType(QZXing::SourceFilter_ImageNormal);
-//    decoder.setTryHarderBehaviour(QZXing::TryHarderBehaviour_ThoroughScanning | QZXing::TryHarderBehaviour_Rotate);
+}
 
-
-////    decoder.setDecoder( QZXing::DecoderFormat_CODE_128 | QZXing::DecoderFormat_QR_CODE);
-//    QString result = decoder.decodeImage(decodeImg);
-//    if(result.isEmpty()){
-//        QMessageBox::about(this,"warning","Wrong picture format!");
-//        return;
-//    }
-//    //扫码结果显示textEdit
-//    ui->decodeText->setText(result);
+void MainWindow::on_save_qrcode_pbtn_clicked()
+{
+    QString filename =  QFileDialog::getSaveFileName(this,tr("save file"),"","jpg file (*.jpg);;all files(*.*)");
+    encodeImg.save(filename);
 }
 
 void MainWindow::decode(QImage img)
@@ -74,7 +67,7 @@ void MainWindow::decode(QImage img)
     decoder.setSourceFilterType(QZXing::SourceFilter_ImageNormal);
     decoder.setTryHarderBehaviour(QZXing::TryHarderBehaviour_ThoroughScanning |
                                   QZXing::TryHarderBehaviour_Rotate);
-    QString info = decoder.decodeImage(encodeImg);
+    QString info = decoder.decodeImage(img);
     if(info.isEmpty()){
         QMessageBox::about(this,"warning","Wrong picture format!");
         return;

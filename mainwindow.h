@@ -18,7 +18,8 @@ public:
 
 public slots:
     void on_generator_qrcode_pbtn_clicked();
-    void on_qrcode_scan_pbtn_clicked();
+    void on_qrcode_file_pbtn_clicked();
+    void on_save_qrcode_pbtn_clicked();
 
 private:
     Ui::MainWindow *ui;
